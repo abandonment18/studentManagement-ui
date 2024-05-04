@@ -205,11 +205,7 @@
         @open="openMethods"
       >
         <el-form :model="form" label-width="120px" :rules="rules" ref="form">
-          <el-form-item
-            label="学生编号"
-            prop="studentID"
-            @input="handleStudentIdInput"
-          >
+          <el-form-item label="学生编号" prop="studentID">
             <el-input v-model="form.studentID" style="width: 80%"></el-input>
           </el-form-item>
           <el-form-item label="学生名称" prop="studentName">
@@ -284,7 +280,7 @@ import { selectAllCoursesInfoList } from "@/api/teacher/courses";
 import { searchByStudentsId } from "@/api/student/AllStudent";
 import { selectPerson } from "@/api/personalInfo";
 import { handleErrorResponse } from "@/util/request";
-import { getToken, getUserType, removeToken, getUserId } from "@/util/auth";
+import { getToken, removeToken } from "@/util/auth";
 
 export default {
   name: "courses",
@@ -342,7 +338,7 @@ export default {
     };
   },
   mounted() {
-    this.userType = getUserType();
+    this.userType = this.$store.state.user.userType;
     this.selectAll();
     this.selectAllCourses();
   },
@@ -355,7 +351,7 @@ export default {
         return;
       }
       searchByStudentsId(this.form.studentID).then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data.length !== 0) {
           this.form.studentName = response.data[0].name;
         } else {
@@ -371,7 +367,7 @@ export default {
     // 下拉框查询所有班级
     selectAllCourses() {
       selectAllCoursesInfoList().then((response) => {
-        console.log(response);
+        // console.log(response);
         response.data.forEach((element) => {
           this.allCoursesList.push({
             courseName: element.courseName,
@@ -421,10 +417,9 @@ export default {
             }
           });
         } else if (this.userType === "1") {
-          const id = getUserId();
+          const id = this.$store.state.user.studentID;
           selectStudentCourseInfoByStudentId(pageNum, pageSize, id).then(
             (response) => {
-              // console.log(response);
               if (response.code === 200) {
                 this.tableData = response.data.list;
                 this.total = response.data.total;
@@ -577,6 +572,10 @@ export default {
       this.dialogVisible = true;
       // 清除添加表单数据
       this.form = {};
+      if (this.userType == "1") {
+        this.form.studentID = this.$store.state.user.studentID;
+        this.handleStudentIdInput();
+      }
       // 清空上次校验信息
       // 判断 form 表单中有没有需要重置的内容如果有则重置
       if (this.$refs["form"] !== undefined) {
@@ -598,34 +597,36 @@ export default {
             // validate 就是表单校验后返回的结果
             if (validate) {
               const data = this.form;
-              updateStudentCourse(data).then((response) => {
-                if (response.code == 200) {
-                  this.$message({
-                    type: "success",
-                    message: "修改成功",
-                  });
-                  this.selectAll();
-                  this.dialogVisible = false;
-                } else if (response.code === 300) {
-                  this.$message({
-                    type: "error",
-                    message: response.msg,
-                  });
-                } else if (response.code === 401) {
-                  handleErrorResponse(response.code);
-                  removeToken(getToken);
-                  this.$router.push("/");
-                  this.$message({
-                    type: "error",
-                    message: "请重新登录",
-                  });
-                } else if (response.code === 403) {
-                  handleErrorResponse(response.code);
-                  this.dialogVisible = false;
-                } else {
-                  handleErrorResponse(response.code);
-                }
-              });
+              updateStudentCourse(data)
+                .then((response) => {
+                  if (response.code == 200) {
+                    this.$message({
+                      type: "success",
+                      message: "修改成功",
+                    });
+                    this.selectAll();
+                    this.dialogVisible = false;
+                  } else if (response.code === 300) {
+                    this.$message({
+                      type: "error",
+                      message: response.msg,
+                    });
+                  } else if (response.code === 401) {
+                    handleErrorResponse(response.code);
+                    removeToken(getToken);
+                    this.$router.push("/");
+                    this.$message({
+                      type: "error",
+                      message: "请重新登录",
+                    });
+                  } else if (response.code === 403) {
+                    handleErrorResponse(response.code);
+                    this.dialogVisible = false;
+                  } else {
+                    handleErrorResponse(response.code);
+                  }
+                })
+                .catch(() => {});
             } else {
               // 校验没有通过
               // 提示 校验失败 消息框
@@ -644,8 +645,59 @@ export default {
             //   validate = true;
             // validate 就是表单校验后返回的结果
             if (validate) {
-              console.log(this.form);
-              insertStudentCourse(this.form).then((response) => {
+              // console.log(this.form);
+              insertStudentCourse(this.form)
+                .then((response) => {
+                  if (response.code == 200) {
+                    this.$message({
+                      type: "success",
+                      message: "增加成功",
+                    });
+                    this.selectAll();
+                    this.dialogVisible = false;
+                  } else if (response.code === 300) {
+                    this.$message({
+                      type: "error",
+                      message: response.msg,
+                    });
+                  } else if (response.code === 401) {
+                    handleErrorResponse(response.code);
+                    removeToken(getToken);
+                    this.$router.push("/");
+                    this.$message({
+                      type: "error",
+                      message: "请重新登录",
+                    });
+                  } else if (response.code === 403) {
+                    handleErrorResponse(response.code);
+                    this.dialogVisible = false;
+                  } else {
+                    handleErrorResponse(response.code);
+                  }
+                })
+                .catch(() => {});
+            } else {
+              // 校验没有通过
+              // 提示 校验失败 消息框
+              this.$message({
+                type: "error",
+                message: "验证失败，不提交",
+              });
+            }
+            // 放弃提交
+            return false;
+          });
+        }
+      } else if (this.userType === "1") {
+        // 当用户是学生的时候只能增加选课
+        this.$refs["form"].validate((validate) => {
+          // 让前端校验放行，测试完毕后，在修改回去
+          // console.log(validate);
+          //   validate = true;
+          // validate 就是表单校验后返回的结果
+          if (validate) {
+            insertStudentCourse(this.form)
+              .then((response) => {
                 if (response.code == 200) {
                   this.$message({
                     type: "success",
@@ -672,55 +724,8 @@ export default {
                 } else {
                   handleErrorResponse(response.code);
                 }
-              });
-            } else {
-              // 校验没有通过
-              // 提示 校验失败 消息框
-              this.$message({
-                type: "error",
-                message: "验证失败，不提交",
-              });
-            }
-            // 放弃提交
-            return false;
-          });
-        }
-      } else if (this.userType === "1") {
-        // 当用户是学生的时候只能增加选课
-        this.$refs["form"].validate((validate) => {
-          // 让前端校验放行，测试完毕后，在修改回去
-          // console.log(validate);
-          //   validate = true;
-          // validate 就是表单校验后返回的结果
-          if (validate) {
-            insertStudentCourse(this.form).then((response) => {
-              if (response.code == 200) {
-                this.$message({
-                  type: "success",
-                  message: "增加成功",
-                });
-                this.selectAll();
-                this.dialogVisible = false;
-              } else if (response.code === 300) {
-                this.$message({
-                  type: "error",
-                  message: response.msg,
-                });
-              } else if (response.code === 401) {
-                handleErrorResponse(response.code);
-                removeToken(getToken);
-                this.$router.push("/");
-                this.$message({
-                  type: "error",
-                  message: "请重新登录",
-                });
-              } else if (response.code === 403) {
-                handleErrorResponse(response.code);
-                this.dialogVisible = false;
-              } else {
-                handleErrorResponse(response.code);
-              }
-            });
+              })
+              .catch(() => {});
           } else {
             // 校验没有通过
             // 提示 校验失败 消息框

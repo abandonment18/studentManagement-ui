@@ -15,18 +15,15 @@ export function selectAllTeacherInfo(pageNum, pageSize) {
 // 根据教师编号搜索
 export function searchByTeachersId(id) {
   return request({
-    method: "post",
-    url: "/admin/searchByTeachersId",
-    params: {
-      teachersId: id,
-    },
+    method: "get",
+    url: "/admin/searchByTeachersId?teachersId=" + id,
   });
 }
 
 // 根据教师名称搜索
 export function searchByName(name) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchByName",
     params: {
       name: name,
@@ -37,7 +34,7 @@ export function searchByName(name) {
 // 删除
 export function deleteTeachersById(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/deleteTeachersById",
     params: {
       id: id,

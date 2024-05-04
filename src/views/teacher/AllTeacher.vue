@@ -77,8 +77,14 @@
         <el-form-item label="教师名称" prop="name">
           <el-input v-model="form.name" style="width: 80%"></el-input>
         </el-form-item>
-        <el-form-item label="性别" prop="gender">
+        <!-- <el-form-item label="性别" prop="gender">
           <el-input v-model="form.gender" style="width: 80%"></el-input>
+        </el-form-item> -->
+        <el-form-item label="性别" prop="gender">
+          <el-radio-group v-model="form.gender">
+            <el-radio label="男"></el-radio>
+            <el-radio label="女"></el-radio>
+          </el-radio-group>
         </el-form-item>
 
         <el-form-item label="教师职称" prop="title">
@@ -182,23 +188,25 @@ export default {
       if (token !== null) {
         const pageNum = this.currentPage;
         const pageSize = this.pageSize;
-        selectAllTeacherInfo(pageNum, pageSize).then((response) => {
-          // console.log(response);
-          if (response.code === 200) {
-            this.tableData = response.data.list;
-            this.total = response.data.total;
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+        selectAllTeacherInfo(pageNum, pageSize)
+          .then((response) => {
+            // console.log(response);
+            if (response.code === 200) {
+              this.tableData = response.data.list;
+              this.total = response.data.total;
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
       } else {
         removeToken(getToken);
         this.$router.push("/");
@@ -229,21 +237,23 @@ export default {
       //   console.log(this.search);
       const data = this.searchTeacherId;
       if (data) {
-        searchByTeachersId(data).then((response) => {
-          if (response.code == 200) {
-            this.tableData = response.data;
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+        searchByTeachersId(data)
+          .then((response) => {
+            if (response.code == 200) {
+              this.tableData = response.data;
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
       } else {
         return false;
       }
@@ -253,21 +263,23 @@ export default {
       const data = this.searchName;
       // console.log(data);
       if (data) {
-        searchByName(data).then((response) => {
-          if (response.code == 200) {
-            this.tableData = response.data;
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+        searchByName(data)
+          .then((response) => {
+            if (response.code == 200) {
+              this.tableData = response.data;
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
       } else {
         return false;
       }
@@ -281,25 +293,27 @@ export default {
     // 删除
     handDelete(id) {
       //   console.log(id);
-      deleteTeachersById(id).then((response) => {
-        if (response.code == 200) {
-          this.selectAll();
-          this.$message({
-            type: "success",
-            message: "删除成功",
-          });
-        } else if (response.code === 401) {
-          handleErrorResponse(response.code);
-          removeToken(getToken);
-          this.$router.push("/");
-          this.$message({
-            type: "error",
-            message: "请重新登录",
-          });
-        } else {
-          handleErrorResponse(response.code);
-        }
-      });
+      deleteTeachersById(id)
+        .then((response) => {
+          if (response.code == 200) {
+            this.selectAll();
+            this.$message({
+              type: "success",
+              message: "删除成功",
+            });
+          } else if (response.code === 401) {
+            handleErrorResponse(response.code);
+            removeToken(getToken);
+            this.$router.push("/");
+            this.$message({
+              type: "error",
+              message: "请重新登录",
+            });
+          } else {
+            handleErrorResponse(response.code);
+          }
+        })
+        .catch(() => {});
     },
     // 增加弹窗
     handAdd() {
@@ -325,34 +339,36 @@ export default {
           // validate 就是表单校验后返回的结果
           if (validate) {
             const data = this.form;
-            updateTeachers(data).then((response) => {
-              if (response.code == 200) {
-                this.$message({
-                  type: "success",
-                  message: "修改成功",
-                });
-                this.selectAll();
-                this.dialogVisible = false;
-              } else if (response.code === 300) {
-                this.$message({
-                  type: "error",
-                  message: response.msg,
-                });
-              } else if (response.code === 401) {
-                handleErrorResponse(response.code);
-                removeToken(getToken);
-                this.$router.push("/");
-                this.$message({
-                  type: "error",
-                  message: "请重新登录",
-                });
-              } else if (response.code === 403) {
-                handleErrorResponse(response.code);
-                this.dialogVisible = false;
-              } else {
-                handleErrorResponse(response.code);
-              }
-            });
+            updateTeachers(data)
+              .then((response) => {
+                if (response.code == 200) {
+                  this.$message({
+                    type: "success",
+                    message: "修改成功",
+                  });
+                  this.selectAll();
+                  this.dialogVisible = false;
+                } else if (response.code === 300) {
+                  this.$message({
+                    type: "error",
+                    message: response.msg,
+                  });
+                } else if (response.code === 401) {
+                  handleErrorResponse(response.code);
+                  removeToken(getToken);
+                  this.$router.push("/");
+                  this.$message({
+                    type: "error",
+                    message: "请重新登录",
+                  });
+                } else if (response.code === 403) {
+                  handleErrorResponse(response.code);
+                  this.dialogVisible = false;
+                } else {
+                  handleErrorResponse(response.code);
+                }
+              })
+              .catch(() => {});
           } else {
             // 校验没有通过
             // 提示 校验失败 消息框
@@ -371,34 +387,37 @@ export default {
           //   validate = true;
           // validate 就是表单校验后返回的结果
           if (validate) {
-            insertTeachers(this.form).then((response) => {
-              if (response.code == 200) {
-                this.$message({
-                  type: "success",
-                  message: "增加成功",
-                });
-                this.selectAll();
-                this.dialogVisible = false;
-              } else if (response.code === 300) {
-                this.$message({
-                  type: "error",
-                  message: response.msg,
-                });
-              } else if (response.code === 401) {
-                handleErrorResponse(response.code);
-                removeToken(getToken);
-                this.$router.push("/");
-                this.$message({
-                  type: "error",
-                  message: "请重新登录",
-                });
-              } else if (response.code === 403) {
-                handleErrorResponse(response.code);
-                this.dialogVisible = false;
-              } else {
-                handleErrorResponse(response.code);
-              }
-            });
+            // console.log(this.form);
+            insertTeachers(this.form)
+              .then((response) => {
+                if (response.code == 200) {
+                  this.$message({
+                    type: "success",
+                    message: "增加成功",
+                  });
+                  this.selectAll();
+                  this.dialogVisible = false;
+                } else if (response.code === 300) {
+                  this.$message({
+                    type: "error",
+                    message: response.msg,
+                  });
+                } else if (response.code === 401) {
+                  handleErrorResponse(response.code);
+                  removeToken(getToken);
+                  this.$router.push("/");
+                  this.$message({
+                    type: "error",
+                    message: "请重新登录",
+                  });
+                } else if (response.code === 403) {
+                  handleErrorResponse(response.code);
+                  this.dialogVisible = false;
+                } else {
+                  handleErrorResponse(response.code);
+                }
+              })
+              .catch(() => {});
           } else {
             // 校验没有通过
             // 提示 校验失败 消息框

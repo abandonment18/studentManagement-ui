@@ -14,6 +14,6 @@ export function registerTeachers(data) {
   return request({
     method: "post",
     url: "/admin/registerTeachers",
-    data: data,
+    data,
   });
 }

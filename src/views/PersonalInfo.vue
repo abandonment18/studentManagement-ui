@@ -123,7 +123,7 @@ export default {
           required: true,
           trigger: "blur",
           message: "请输入邮箱",
-          pattern: /^([1-9])?([0-9])+.@([a-zA-Z0-9])+$/,
+          pattern: /^([1-9])?([0-9])+@([a-zA-Z0-9]+).([a-zA-Z])+$/,
         },
         phoneNumber: {
           required: true,
@@ -163,31 +163,34 @@ export default {
     selectPersonalInfo() {
       const token = getToken();
       if (token !== null) {
-        selectPerson().then((response) => {
-          // console.log(response);
-          if (response.code === 200) {
-            this.form = response.data;
-            // userType = 0 为教师（管理员）
-            // userType = 1 为学生（普通用户）
-            if (this.form.userType === "0") {
-              this.form.teacherIDOrStudentID = this.form.teacherID;
-              this.form.titleOrAge = this.form.title;
-            } else if (this.form.userType === "1") {
-              this.form.teacherIDOrStudentID = this.form.studentID;
-              this.form.titleOrAge = this.form.age;
+        selectPerson()
+          .then((response) => {
+            // console.log(response);
+            if (response.code === 200) {
+              this.form = response.data;
+              // console.log(response);
+              // userType = 0 为教师（管理员）
+              // userType = 1 为学生（普通用户）
+              if (this.form.userType === "0") {
+                this.form.teacherIDOrStudentID = this.form.teacherID;
+                this.form.titleOrAge = this.form.title;
+              } else if (this.form.userType === "1") {
+                this.form.teacherIDOrStudentID = this.form.studentID;
+                this.form.titleOrAge = this.form.age;
+              }
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
             }
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+          })
+          .catch(() => {});
       } else {
         removeToken(getToken);
         this.$router.push("/");
@@ -216,24 +219,26 @@ export default {
             this.updateForm.age = this.updateForm.titleOrAge;
           }
           const data = this.updateForm;
-          updatePersonInfo(data).then((response) => {
-            // console.log(response);
-            if (response.code === 200) {
-              this.$message({
-                type: "success",
-                message: "修改成功",
-              });
-              this.selectPersonalInfo();
-              this.dialogVisible = false;
-            } else if (response.code === 300) {
-              this.$message({
-                type: "error",
-                message: "修改失败",
-              });
-            } else {
-              handleErrorResponse(response.code);
-            }
-          });
+          updatePersonInfo(data)
+            .then((response) => {
+              // console.log(response);
+              if (response.code === 200) {
+                this.$message({
+                  type: "success",
+                  message: "修改成功",
+                });
+                this.selectPersonalInfo();
+                this.dialogVisible = false;
+              } else if (response.code === 300) {
+                this.$message({
+                  type: "error",
+                  message: "修改失败",
+                });
+              } else {
+                handleErrorResponse(response.code);
+              }
+            })
+            .catch(() => {});
         } else {
           this.$message({
             type: "error",

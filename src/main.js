@@ -24,7 +24,7 @@ Object.keys(Elicons).forEach((key) => {
 router.beforeEach((to, from, next) => {
   // console.log(getToken());
   if (getToken()) {
-    console.log(to.path);
+    // console.log(to.path);
     if (to.path === "/login") {
       removeToken();
       next();

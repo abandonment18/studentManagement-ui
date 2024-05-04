@@ -15,7 +15,7 @@ export function selectAllStudentInfo(pageNum, pageSize) {
 // 根据学生编号搜索
 export function searchByStudentsId(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchByStudentsId",
     params: {
       studentsId: id,
@@ -26,7 +26,7 @@ export function searchByStudentsId(id) {
 // 根据学生名称搜索
 export function searchStudentsByName(name) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchStudentsByName",
     params: {
       name: name,
@@ -37,7 +37,7 @@ export function searchStudentsByName(name) {
 // 删除
 export function deleteStudentsById(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/deleteStudentsById",
     params: {
       id: id,

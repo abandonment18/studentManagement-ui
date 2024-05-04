@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+
 const routes = [
   {
     redirect: "/login",
@@ -115,6 +116,30 @@ const routes = [
         component: () => import("../views/changePassword.vue"),
         meta: {
           title: "修改密码",
+        },
+      },
+      {
+        path: "/admin/personChat",
+        name: "personChat",
+        component: () => import("../views/personChat.vue"),
+        meta: {
+          title: "聊天",
+        },
+      },
+      {
+        path: "/admin/allUser",
+        name: "allUser",
+        component: () => import("../views/AllUser.vue"),
+        meta: {
+          title: "聊天",
+        },
+      },
+      {
+        path: "/admin/test",
+        name: "test",
+        component: () => import("../views/test.vue"),
+        meta: {
+          title: "test",
         },
       },
     ],

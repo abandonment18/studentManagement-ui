@@ -174,23 +174,25 @@ export default {
       if (token !== null) {
         const pageNum = this.currentPage;
         const pageSize = this.pageSize;
-        selectAllUnitsInfo(pageNum, pageSize).then((response) => {
-          // console.log(response);
-          if (response.code === 200) {
-            this.tableData = response.data.list;
-            this.total = response.data.total;
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+        selectAllUnitsInfo(pageNum, pageSize)
+          .then((response) => {
+            // console.log(response);
+            if (response.code === 200) {
+              this.tableData = response.data.list;
+              this.total = response.data.total;
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
       } else {
         removeToken(getToken);
         this.$router.push("/");
@@ -221,21 +223,23 @@ export default {
       //   console.log(this.search);
       const data = this.searchUnitsTeacherId;
       if (data) {
-        searchUnitsByTeacherId(data).then((response) => {
-          if (response.code == 200) {
-            this.tableData = response.data;
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+        searchUnitsByTeacherId(data)
+          .then((response) => {
+            if (response.code == 200) {
+              this.tableData = response.data;
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
       } else {
         return false;
       }
@@ -245,21 +249,23 @@ export default {
       const data = this.searchUnitsName;
       // console.log(data);
       if (data) {
-        searchUnitsByName(data).then((response) => {
-          if (response.code == 200) {
-            this.tableData = response.data;
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+        searchUnitsByName(data)
+          .then((response) => {
+            if (response.code == 200) {
+              this.tableData = response.data;
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
       } else {
         return false;
       }
@@ -273,25 +279,27 @@ export default {
     // 删除
     handDelete(id) {
       //   console.log(id);
-      deleteUnitsById(id).then((response) => {
-        if (response.code == 200) {
-          this.selectAll();
-          this.$message({
-            type: "success",
-            message: "删除成功",
-          });
-        } else if (response.code === 401) {
-          handleErrorResponse(response.code);
-          removeToken(getToken);
-          this.$router.push("/");
-          this.$message({
-            type: "error",
-            message: "请重新登录",
-          });
-        } else {
-          handleErrorResponse(response.code);
-        }
-      });
+      deleteUnitsById(id)
+        .then((response) => {
+          if (response.code == 200) {
+            this.selectAll();
+            this.$message({
+              type: "success",
+              message: "删除成功",
+            });
+          } else if (response.code === 401) {
+            handleErrorResponse(response.code);
+            removeToken(getToken);
+            this.$router.push("/");
+            this.$message({
+              type: "error",
+              message: "请重新登录",
+            });
+          } else {
+            handleErrorResponse(response.code);
+          }
+        })
+        .catch(() => {});
     },
     // 增加弹窗
     handAdd() {
@@ -317,34 +325,36 @@ export default {
           // validate 就是表单校验后返回的结果
           if (validate) {
             const data = this.form;
-            updateUnits(data).then((response) => {
-              if (response.code == 200) {
-                this.$message({
-                  type: "success",
-                  message: "修改成功",
-                });
-                this.selectAll();
-                this.dialogVisible = false;
-              } else if (response.code === 300) {
-                this.$message({
-                  type: "error",
-                  message: response.msg,
-                });
-              } else if (response.code === 401) {
-                handleErrorResponse(response.code);
-                removeToken(getToken);
-                this.$router.push("/");
-                this.$message({
-                  type: "error",
-                  message: "请重新登录",
-                });
-              } else if (response.code === 403) {
-                handleErrorResponse(response.code);
-                this.dialogVisible = false;
-              } else {
-                handleErrorResponse(response.code);
-              }
-            });
+            updateUnits(data)
+              .then((response) => {
+                if (response.code == 200) {
+                  this.$message({
+                    type: "success",
+                    message: "修改成功",
+                  });
+                  this.selectAll();
+                  this.dialogVisible = false;
+                } else if (response.code === 300) {
+                  this.$message({
+                    type: "error",
+                    message: response.msg,
+                  });
+                } else if (response.code === 401) {
+                  handleErrorResponse(response.code);
+                  removeToken(getToken);
+                  this.$router.push("/");
+                  this.$message({
+                    type: "error",
+                    message: "请重新登录",
+                  });
+                } else if (response.code === 403) {
+                  handleErrorResponse(response.code);
+                  this.dialogVisible = false;
+                } else {
+                  handleErrorResponse(response.code);
+                }
+              })
+              .catch(() => {});
           } else {
             // 校验没有通过
             // 提示 校验失败 消息框
@@ -363,34 +373,36 @@ export default {
           //   validate = true;
           // validate 就是表单校验后返回的结果
           if (validate) {
-            insertUnits(this.form).then((response) => {
-              if (response.code == 200) {
-                this.$message({
-                  type: "success",
-                  message: "增加成功",
-                });
-                this.selectAll();
-                this.dialogVisible = false;
-              } else if (response.code === 300) {
-                this.$message({
-                  type: "error",
-                  message: response.msg,
-                });
-              } else if (response.code === 401) {
-                handleErrorResponse(response.code);
-                removeToken(getToken);
-                this.$router.push("/");
-                this.$message({
-                  type: "error",
-                  message: "请重新登录",
-                });
-              } else if (response.code === 403) {
-                handleErrorResponse(response.code);
-                this.dialogVisible = false;
-              } else {
-                handleErrorResponse(response.code);
-              }
-            });
+            insertUnits(this.form)
+              .then((response) => {
+                if (response.code == 200) {
+                  this.$message({
+                    type: "success",
+                    message: "增加成功",
+                  });
+                  this.selectAll();
+                  this.dialogVisible = false;
+                } else if (response.code === 300) {
+                  this.$message({
+                    type: "error",
+                    message: response.msg,
+                  });
+                } else if (response.code === 401) {
+                  handleErrorResponse(response.code);
+                  removeToken(getToken);
+                  this.$router.push("/");
+                  this.$message({
+                    type: "error",
+                    message: "请重新登录",
+                  });
+                } else if (response.code === 403) {
+                  handleErrorResponse(response.code);
+                  this.dialogVisible = false;
+                } else {
+                  handleErrorResponse(response.code);
+                }
+              })
+              .catch(() => {});
           } else {
             // 校验没有通过
             // 提示 校验失败 消息框

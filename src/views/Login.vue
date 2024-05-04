@@ -6,13 +6,21 @@
       ref="login"
       @keydown.enter="loginForm"
       :rules="loginRules"
+      :hide-required-asterisk="true"
     >
-      <h1 style="text-align: center; margin-bottom: 30px">登录</h1>
+      <h1 style="text-align: center; margin-bottom: 30px" class="title">
+        登录
+      </h1>
 
-      <el-form-item label="Username" prop="username" class="item">
+      <el-form-item label="用户名" prop="username" class="item">
         <el-input v-model="login.username" type="text" />
       </el-form-item>
-      <el-form-item label="Password" prop="password">
+      <el-form-item
+        label="密码"
+        prop="password"
+        label-width="54px"
+        class="item"
+      >
         <el-input v-model="login.password" type="password" />
       </el-form-item>
       <el-form-item>
@@ -77,21 +85,30 @@ export default {
       const data = this.login;
       this.$refs["login"].validate((validate) => {
         if (validate) {
-          login(data).then((response) => {
-            // console.log(response);
-            if (response.code === 200) {
+          // login(data).then((response) => {
+          //   // console.log(response);
+          //   if (response.code === 200) {
+          //     this.$router.push("/admin/home");
+          //     setToken(response.data.token);
+          //     this.$message({
+          //       type: "success",
+          //       message: "登陆成功",
+          //     });
+          //   }
+          //   // 401: "认证失败，无法访问系统资源",
+          //   else if (response.code === 401) {
+          //     handleErrorResponse(response.code);
+          //   }
+          // });
+          this.$store
+            .dispatch("user/login", data)
+            .then((res) => {
+              setToken(res.data.token);
               this.$router.push("/admin/home");
-              setToken(response.data.token);
-              this.$message({
-                type: "success",
-                message: "登陆成功",
-              });
-            }
-            // 401: "认证失败，无法访问系统资源",
-            else if (response.code === 401) {
-              handleErrorResponse(response.code);
-            }
-          });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         } else {
           this.$message({
             type: "error",
@@ -114,6 +131,13 @@ export default {
   justify-content: center;
   align-items: center;
   background-size: 100%;
+  background: url("../assets/images/background.jpg") center no-repeat;
+  background-size: 100%;
+}
+.title {
+  font-size: 50px;
+  color: aliceblue;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .el-form {
   margin: auto;
@@ -121,5 +145,8 @@ export default {
 }
 .el-form-item__label::before {
   display: none;
+}
+.item .el-form-item__label {
+  color: blanchedalmond;
 }
 </style>

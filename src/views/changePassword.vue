@@ -12,12 +12,16 @@
   </div>
   <div class="box">
     <div class="left">
+      <h1 style="margin: 0 0 20px 0">修改密码</h1>
       <el-form
         :model="form"
         ref="form"
         :rules="rules"
         status-icon
         class="demo-form"
+        label-position="left"
+        label-width="120px"
+        require-asterisk-position="right"
       >
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" readonly />
@@ -32,12 +36,14 @@
           <el-input v-model="form.repeatPassword" type="password" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handUpdateForm()">修改</el-button>
+          <el-button
+            type="primary"
+            @click="handUpdateForm()"
+            style="width: 100%"
+            >修改</el-button
+          >
         </el-form-item>
       </el-form>
-    </div>
-    <div class="right">
-      <h1>修改密码</h1>
     </div>
   </div>
 </template>
@@ -87,36 +93,38 @@ export default {
         if (validate) {
           if (this.form.password === this.form.repeatPassword) {
             const data = this.form;
-            updatePassword(data).then((response) => {
-              // console.log(response);
-              if (response.code === 200) {
-                this.$message({
-                  type: "success",
-                  message: "修改成功，请重新登录",
-                });
-                removeToken(getToken);
-                this.$router.push("/");
-                this.form = {};
-                if (this.$refs["form"] != undefined) {
-                  this.$refs["form"].resetFields();
+            updatePassword(data)
+              .then((response) => {
+                // console.log(response);
+                if (response.code === 200) {
+                  this.$message({
+                    type: "success",
+                    message: "修改成功，请重新登录",
+                  });
+                  removeToken(getToken);
+                  this.$router.push("/");
+                  this.form = {};
+                  if (this.$refs["form"] != undefined) {
+                    this.$refs["form"].resetFields();
+                  }
+                } else if (response.code === 300) {
+                  this.$message({
+                    type: "error",
+                    message: response.msg,
+                  });
+                } else if (response.code === 401) {
+                  handleErrorResponse(response.code);
+                  removeToken(getToken);
+                  this.$router.push("/");
+                  this.$message({
+                    type: "error",
+                    message: "请重新登录",
+                  });
+                } else {
+                  handleErrorResponse(response.code);
                 }
-              } else if (response.code === 300) {
-                this.$message({
-                  type: "error",
-                  message: response.msg,
-                });
-              } else if (response.code === 401) {
-                handleErrorResponse(response.code);
-                removeToken(getToken);
-                this.$router.push("/");
-                this.$message({
-                  type: "error",
-                  message: "请重新登录",
-                });
-              } else {
-                handleErrorResponse(response.code);
-              }
-            });
+              })
+              .catch(() => {});
           } else {
             this.$message({
               type: "error",
@@ -146,6 +154,16 @@ export default {
   align-items: center;
 }
 .left {
-  width: 300px;
+  border: 1px solid #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 800px;
+  margin-top: 50px;
+  border-radius: 10px;
+}
+.el-form {
+  width: 500px;
 }
 </style>

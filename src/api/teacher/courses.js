@@ -23,7 +23,7 @@ export function selectAllCoursesInfoList() {
 // 根据课程编号搜索
 export function searchByCoursesId(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchByCoursesId",
     params: {
       CoursesId: id,
@@ -34,7 +34,7 @@ export function searchByCoursesId(id) {
 // 删除
 export function deleteCoursesById(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/deleteCoursesById",
     params: {
       id: id,

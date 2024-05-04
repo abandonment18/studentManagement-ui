@@ -15,7 +15,7 @@ export function selectAllUnitsInfo(pageNum, pageSize) {
 // 根据教师编号搜索
 export function searchUnitsByTeacherId(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchUnitsByTeacherId",
     params: {
       teachersId: id,
@@ -26,7 +26,7 @@ export function searchUnitsByTeacherId(id) {
 // 根据教师名称搜索
 export function searchUnitsByName(name) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchUnitsByName",
     params: {
       name: name,
@@ -37,7 +37,7 @@ export function searchUnitsByName(name) {
 // 删除
 export function deleteUnitsById(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/deleteUnitsById",
     params: {
       id: id,

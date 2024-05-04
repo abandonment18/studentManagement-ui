@@ -15,7 +15,7 @@ export function selectAllStudentCourseInfo(pageNum, pageSize) {
 // 根据教师编号搜索
 export function searchStudentCourseByStudentId(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchStudentCourseByStudentId",
     params: {
       studentId: id,
@@ -26,7 +26,7 @@ export function searchStudentCourseByStudentId(id) {
 // 根据课程名称搜索
 export function searchStudentCourseByCourseName(name) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchStudentCourseByCourseName",
     params: {
       name: name,
@@ -37,7 +37,7 @@ export function searchStudentCourseByCourseName(name) {
 // 根据教师名称搜索
 export function searchStudentCourseByStudentName(name) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/searchStudentCourseByStudentName",
     params: {
       name: name,
@@ -48,7 +48,7 @@ export function searchStudentCourseByStudentName(name) {
 // 删除
 export function deleteStudentCourseById(id) {
   return request({
-    method: "post",
+    method: "get",
     url: "/admin/deleteStudentCourseById",
     params: {
       id: id,

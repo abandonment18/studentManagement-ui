@@ -38,13 +38,14 @@
         width="auto"
       />
       <el-table-column prop="teacherID" label="任课教师编号" width="auto" />
+      <el-table-column prop="count" label="选课人数" width="auto" />
       <el-table-column fixed="right" label="Operations" width="120">
         <template #default="scoped">
           <el-button
             link
             type="danger"
             size="small"
-            @click="handDelete(scoped.row.id)"
+            @click="handDelete(scoped.row)"
             >删除</el-button
           >
           <el-button
@@ -177,23 +178,25 @@ export default {
         //       pageSize: this.pageSize,
         //     },
         //   })
-        selectAllCoursesInfo(pageNum, pageSize).then((response) => {
-          // console.log(response);
-          if (response.code === 200) {
-            this.tableData = response.data.list;
-            this.total = response.data.total;
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+        selectAllCoursesInfo(pageNum, pageSize)
+          .then((response) => {
+            // console.log(response);
+            if (response.code === 200) {
+              this.tableData = response.data.list;
+              this.total = response.data.total;
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
       } else {
         removeToken(getToken);
         this.$router.push("/");
@@ -224,21 +227,23 @@ export default {
       //   console.log(this.search);
       const data = this.search;
       if (data) {
-        searchByCoursesId(data).then((response) => {
-          if (response.code == 200) {
-            this.tableData = response.data;
-          } else if (response.code === 401) {
-            handleErrorResponse(response.code);
-            removeToken(getToken);
-            this.$router.push("/");
-            this.$message({
-              type: "error",
-              message: "请重新登录",
-            });
-          } else {
-            handleErrorResponse(response.code);
-          }
-        });
+        searchByCoursesId(data)
+          .then((response) => {
+            if (response.code == 200) {
+              this.tableData = response.data;
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
       } else {
         return false;
       }
@@ -249,27 +254,36 @@ export default {
       this.search = "";
     },
     // 删除
-    handDelete(id) {
-      //   console.log(id);
-      deleteCoursesById(id).then((response) => {
-        if (response.code == 200) {
-          this.selectAll();
-          this.$message({
-            type: "success",
-            message: "删除成功",
-          });
-        } else if (response.code === 401) {
-          handleErrorResponse(response.code);
-          removeToken(getToken);
-          this.$router.push("/");
-          this.$message({
-            type: "error",
-            message: "请重新登录",
-          });
-        } else {
-          handleErrorResponse(response.code);
-        }
-      });
+    handDelete(row) {
+      // console.log(row);
+      if (row.count === 0) {
+        deleteCoursesById(row.id)
+          .then((response) => {
+            if (response.code == 200) {
+              this.selectAll();
+              this.$message({
+                type: "success",
+                message: "删除成功",
+              });
+            } else if (response.code === 401) {
+              handleErrorResponse(response.code);
+              removeToken(getToken);
+              this.$router.push("/");
+              this.$message({
+                type: "error",
+                message: "请重新登录",
+              });
+            } else {
+              handleErrorResponse(response.code);
+            }
+          })
+          .catch(() => {});
+      } else {
+        this.$message({
+          type: "error",
+          message: "删除失败",
+        });
+      }
     },
     // 增加弹窗
     handAdd() {
@@ -296,35 +310,37 @@ export default {
           if (validate) {
             const data = this.form;
             // console.log(data);
-            updateCourses(data).then((response) => {
-              if (response.code == 200) {
-                this.selectAll();
-                this.$message({
-                  type: "success",
-                  message: "修改成功",
-                });
-                this.dialogVisible = false;
-              } else if (response.code === 401) {
-                handleErrorResponse(response.code);
-                removeToken(getToken);
-                this.$router.push("/");
-                this.$message({
-                  type: "error",
-                  message: "请重新登录",
-                });
-              } else if (response.code === 300) {
-                this.$message({
-                  type: "error",
-                  message: response.msg,
-                });
-              } else if (response.code === 403) {
-                handleErrorResponse(response.code);
-              } else {
-                handleErrorResponse(response.code);
-              }
+            updateCourses(data)
+              .then((response) => {
+                if (response.code == 200) {
+                  this.selectAll();
+                  this.$message({
+                    type: "success",
+                    message: "修改成功",
+                  });
+                  this.dialogVisible = false;
+                } else if (response.code === 401) {
+                  handleErrorResponse(response.code);
+                  removeToken(getToken);
+                  this.$router.push("/");
+                  this.$message({
+                    type: "error",
+                    message: "请重新登录",
+                  });
+                } else if (response.code === 300) {
+                  this.$message({
+                    type: "error",
+                    message: response.msg,
+                  });
+                } else if (response.code === 403) {
+                  handleErrorResponse(response.code);
+                } else {
+                  handleErrorResponse(response.code);
+                }
 
-              this.selectAll();
-            });
+                this.selectAll();
+              })
+              .catch(() => {});
           } else {
             // 校验没有通过
             // 提示 校验失败 消息框
@@ -343,34 +359,36 @@ export default {
           //   validate = true;
           // validate 就是表单校验后返回的结果
           if (validate) {
-            insertCourses(this.form).then((response) => {
-              if (response.code == 200) {
-                this.$message({
-                  type: "success",
-                  message: "增加成功",
-                });
-                this.selectAll();
-                this.dialogVisible = false;
-              } else if (response.code === 300) {
-                this.$message({
-                  type: "error",
-                  message: response.msg,
-                });
-              } else if (response.code === 401) {
-                handleErrorResponse(response.code);
-                removeToken(getToken);
-                this.$router.push("/");
-                this.$message({
-                  type: "error",
-                  message: "请重新登录",
-                });
-              } else if (response.code === 403) {
-                handleErrorResponse(response.code);
-                this.dialogVisible = false;
-              } else {
-                handleErrorResponse(response.code);
-              }
-            });
+            insertCourses(this.form)
+              .then((response) => {
+                if (response.code == 200) {
+                  this.$message({
+                    type: "success",
+                    message: "增加成功",
+                  });
+                  this.selectAll();
+                  this.dialogVisible = false;
+                } else if (response.code === 300) {
+                  this.$message({
+                    type: "error",
+                    message: response.msg,
+                  });
+                } else if (response.code === 401) {
+                  handleErrorResponse(response.code);
+                  removeToken(getToken);
+                  this.$router.push("/");
+                  this.$message({
+                    type: "error",
+                    message: "请重新登录",
+                  });
+                } else if (response.code === 403) {
+                  handleErrorResponse(response.code);
+                  this.dialogVisible = false;
+                } else {
+                  handleErrorResponse(response.code);
+                }
+              })
+              .catch(() => {});
           } else {
             // 校验没有通过
             // 提示 校验失败 消息框
